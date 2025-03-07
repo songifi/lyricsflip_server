@@ -48,27 +48,6 @@ npm run build
 npm run start:prod
 ```
 
-
-
-```
-src/
-├── app.module.ts              # Main application module
-├── main.ts                    # Application entry point
-├── common/                    # Common utilities, filters, pipes, etc.
-├── config/                    # Configuration modules
-├── modules/                   # Feature modules
-│   ├── user/                  # User module
-│   ├── song/                  # Song module
-│   ├── game-session/          # Game session module
-│   ├── game-round/            # Game round module
-│   ├── mcq/                   # Multiple choice questions module
-│   ├── transaction/           # Transaction module
-│   ├── wallet/                # Wallet module
-│   └── ... other modules
-├── starknet/                  # Starknet integration
-└── websocket/                 # WebSocket implementation
-```
-
 ## API Documentation
 
 Once the application is running, you can access the Swagger API documentation at:
