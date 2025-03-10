@@ -7,7 +7,7 @@ import { Connection } from 'mongoose';
 export class AppService {
   constructor(
     private configService: ConfigService,
-    @InjectConnection() private readonly connection: Connection
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   getDatabaseUrl(): string {
