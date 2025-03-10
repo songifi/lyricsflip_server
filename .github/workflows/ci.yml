@@ -1,0 +1,47 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [main, staging]
+    push:
+        branches: [main, staging]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '18.x'
+                cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Lint
+              run: npm run lint
+
+            - name: Check formatting
+              run: npm run format
+
+            - name: Build
+              run: npm run build
+            
+            - name: Test with coverage
+              run: npm test -- --coverage
+
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v3
+              with:
+                name: nestjs-build
+                path: dist/
+
+            - name: Upload coverage report
+              uses: actions/upload-artifact@v3
+              with:
+                name: coverage-report
+                path: coverage/lcov.info

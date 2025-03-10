@@ -18,7 +18,9 @@ import { validate } from './config/env.validation';
         uri: configService.get<string>('DATABASE_URL'),
         connectionFactory: (connection) => {
           connection.on('connected', () => console.log('MongoDB connected'));
-          connection.on('error', (err) => console.error('MongoDB connection error:', err));
+          connection.on('error', (err) =>
+            console.error('MongoDB connection error:', err),
+          );
           return connection;
         },
       }),
