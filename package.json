@@ -18,8 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "setup:dev": "./scripts/setup-env.sh development",
-    "setup:test": "./scripts/setup-env.sh test"
+    "setup": "./scripts/setup-env.sh"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
