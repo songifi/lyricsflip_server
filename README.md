@@ -30,11 +30,14 @@ git clone https://github.com/your-username/lyricflip-backend.git
 cd lyricflip-backend
 
 # Install dependencies
-npm install
 ```
 
+## Environment Setup
+run the setup script to setup you env variables 
+```bash
+npm run setup
 
-
+```
 
 
 ### Running the Application
