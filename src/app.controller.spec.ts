@@ -7,22 +7,34 @@ describe('AppController', () => {
   let appController: AppController;
 
   beforeEach(async () => {
-    const mockConfigService = {
-      get: jest.fn().mockReturnValue('Hello World!'),
-    };
-
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [
         AppService,
-        { provide: ConfigService, useValue: mockConfigService },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'DATABASE_URL') {
+                return 'mongodb://localhost:27017/lyricsflip-test';
+              }
+              return null;
+            }),
+          },
+        },
+        {
+          provide: 'DatabaseConnection', // Replace with the actual token used for DatabaseConnection
+          useValue: {}, // Mock the DatabaseConnection dependency
+        },
       ],
     }).compile();
 
     appController = app.get<AppController>(AppController);
   });
 
-  it('should return "Hello World!"', () => {
-    expect(appController.getHello()).toBe('Hello World!');
+  describe('root', () => {
+    it('should return "Hello World!"', () => {
+      expect(appController.getHello()).toBe('Hello World!');
+    });
   });
 });
