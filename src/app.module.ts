@@ -10,6 +10,7 @@ import { LyricsModule } from './lyrics/lyrics.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       validate,
     }),
     MongooseModule.forRootAsync({
