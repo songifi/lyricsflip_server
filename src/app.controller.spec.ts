@@ -23,7 +23,7 @@ describe('AppController', () => {
           },
         },
         {
-          provide: 'DatabaseConnection', // Replace with the actual token used for DatabaseConnection
+          provide: 'DatabaseConnection',
           useValue: {}, // Mock the DatabaseConnection dependency
         },
       ],
