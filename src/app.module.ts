@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
 import { LyricsModule } from './lyrics/lyrics.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LyricsModule } from './lyrics/lyrics.module';
       }),
     }),
     LyricsModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,4 +4,4 @@ import { LyricsController } from './lyrics.controller';
 @Module({
   controllers: [LyricsController],
 })
-export class LyricsModule {} 
+export class LyricsModule {}

@@ -4,7 +4,7 @@ import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 export class CreateLyricsDto {
   @ApiProperty({
     description: 'The title of the song',
-    example: 'Bohemian Rhapsody'
+    example: 'Bohemian Rhapsody',
   })
   @IsString()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateLyricsDto {
 
   @ApiProperty({
     description: 'The artist name',
-    example: 'Queen'
+    example: 'Queen',
   })
   @IsString()
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class CreateLyricsDto {
 
   @ApiProperty({
     description: 'The lyrics content',
-    example: 'Is this the real life? Is this just fantasy?'
+    example: 'Is this the real life? Is this just fantasy?',
   })
   @IsString()
   @IsNotEmpty()
@@ -29,7 +29,7 @@ export class CreateLyricsDto {
   @ApiProperty({
     description: 'Genre of the song',
     example: 'Rock',
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -44,7 +44,7 @@ export class UpdateLyricsDto {
   @ApiProperty({
     description: 'The title of the song',
     example: 'Bohemian Rhapsody',
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -53,7 +53,7 @@ export class UpdateLyricsDto {
   @ApiProperty({
     description: 'The artist name',
     example: 'Queen',
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -62,7 +62,7 @@ export class UpdateLyricsDto {
   @ApiProperty({
     description: 'The lyrics content',
     example: 'Is this the real life? Is this just fantasy?',
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -71,7 +71,7 @@ export class UpdateLyricsDto {
   @ApiProperty({
     description: 'Genre of the song',
     example: 'Rock',
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -80,4 +80,4 @@ export class UpdateLyricsDto {
   constructor(partial: Partial<UpdateLyricsDto> = {}) {
     Object.assign(this, partial);
   }
-} 
+}
