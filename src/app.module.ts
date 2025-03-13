@@ -4,12 +4,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
-import { LyricsModule } from './lyrics/lyrics.module';
-import { WalletModule } from './wallet/wallet.module';
 import { UserModule } from './user/user.module';
+import { lyricModule } from './lyrics/lyric.module';
+import { WalletModule } from './wallet/wallet.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,9 +30,9 @@ dotenv.config();
         },
       }),
     }),
-    LyricsModule,
-    WalletModule,
+    lyricModule,
     UserModule,
+    WalletModule
   ],
   controllers: [AppController],
   providers: [AppService],
