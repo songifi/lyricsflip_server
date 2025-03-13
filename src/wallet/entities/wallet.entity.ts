@@ -1,21 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
-@Schema()
-export class Wallet {
-  @Prop({ required: true })
-  userId: string;
+export enum WalletStatus {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+  }
+  @Schema({ timestamps: true })
+  export class Wallet extends Document {
+    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+    userId: string;
+  
+    @Prop({ type: [String], required: true, unique: true })
+    address: string[];
+  
+    @Prop({ type: Number, required: true, default: 0 })
+    balance: number;
+  
+    @Prop({ type: String, enum: WalletStatus, default: WalletStatus.ACTIVE })
+    status: WalletStatus;
 
-  @Prop({ required: true, unique: true })
-  address: string;
-
-  @Prop({ default: 0 })
-  balance: number;
-
-  @Prop({ default: 'active' })
-  status: string;
-
-  @Prop({ default: Date.now() })
-  createdAt: Date;
-}
-export type WalletDocument = Wallet & Document;
-export const WalletSchema = SchemaFactory.createForClass(Wallet);
+    @Prop({ default: Date.now() })
+    createdAt: Date;  
+    
+    }
+  
+  export const WalletSchema = SchemaFactory.createForClass(Wallet);
+  

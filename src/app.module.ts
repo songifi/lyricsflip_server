@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { validate } from './config/env.validation';
 import { LyricsModule } from './lyrics/lyrics.module';
 import { WalletModule } from './wallet/wallet.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 
 @Module({
   imports: [
