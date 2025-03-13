@@ -1,9 +1,10 @@
 import { IsString, IsNotEmpty, IsOptional, IsInt, Min, Max, IsEnum, ValidateNested, IsBoolean } from "class-validator"
-import { Type } from "class-transformer"
+import { Transform, Type } from "class-transformer"
 import { Decade, Genre } from "src/enum/song.enum"
 import { CreateLyricsDto } from "./lyrics.dto"
 import { PartialType } from "@nestjs/swagger"
 
+// Create Song Dto
 export class CreateSongDto {
 
   @IsString()
@@ -38,4 +39,31 @@ export class CreateSongDto {
   decade?: string
 }
 
+// Update Song Dto
 export class UpdateSongDto extends PartialType(CreateSongDto) {}
+
+// Query Song Dto
+export class QuerySongDto extends PartialType(CreateSongDto) {
+
+    @IsOptional()
+    @IsString()
+    search?: string
+  
+    @IsOptional()
+    @IsInt()
+    @Min(1)
+    @Transform(({ value }) => Number.parseInt(value))
+    limit?: number = 10
+  
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    @Transform(({ value }) => Number.parseInt(value))
+    skip?: number = 0
+  
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => value === "true")
+    withLyrics?: boolean = false
+  }
+  
