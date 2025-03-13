@@ -17,12 +17,11 @@ export enum WalletStatus {
     balance: number;
   
     @Prop({ type: String, enum: WalletStatus, default: WalletStatus.ACTIVE })
-    status: WalletStatus;
-
-    @Prop({ default: Date.now() })
-    createdAt: Date;  
-    
+    status: WalletStatus;    
     }
   
   export const WalletSchema = SchemaFactory.createForClass(Wallet);
-  
+  WalletSchema.index({ userId: 1 }); 
+  WalletSchema.index({ address: 1 }, { unique: true }); 
+  WalletSchema.index({ userId: 1, status: 1 }); 
+  WalletSchema.index({ balance: -1 });   
