@@ -22,7 +22,8 @@ export function validate(config: Record<string, unknown>) {
   });
 
   if (errors.length > 0) {
-    throw new Error(`Environment validation failed: ${JSON.stringify(errors)}`);
+    throw new Error(`Environment validation failed: ${errors}`);
+    // throw new Error(`Environment validation failed: ${JSON.stringify(errors)}`);
   }
 
   return validatedConfig;
