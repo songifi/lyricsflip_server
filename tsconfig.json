@@ -18,6 +18,8 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "strict": true,
-    "strictFunctionTypes": true
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": false
+
   }
 }
