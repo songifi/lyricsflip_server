@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
-import { LyricsModule } from './lyrics/lyrics.module';
+import { UserModule } from './user/user.module';
 import { lyricModule } from './lyrics/lyric.module';
 
 @Module({
@@ -28,8 +28,8 @@ import { lyricModule } from './lyrics/lyric.module';
         },
       }),
     }),
-    LyricsModule,
     lyricModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

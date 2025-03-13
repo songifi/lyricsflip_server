@@ -38,9 +38,6 @@ export class CreatelyricDto {
   decade?: string
 }
 
-export class UpdatelyricDto extends PartialType(CreatelyricDto) {}
-
-
 export class QuerylyricDto extends PartialType(CreatelyricDto) {
 
   @IsOptional()
@@ -65,3 +62,4 @@ export class QuerylyricDto extends PartialType(CreatelyricDto) {
   withLyrics?: boolean = false
 }
 
+export class UpdatelyricDto extends PartialType(CreatelyricDto) {}
