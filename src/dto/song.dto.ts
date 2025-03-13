@@ -2,6 +2,7 @@ import { IsString, IsNotEmpty, IsOptional, IsInt, Min, Max, IsEnum, ValidateNest
 import { Type } from "class-transformer"
 import { Decade, Genre } from "src/enum/song.enum"
 import { CreateLyricsDto } from "./lyrics.dto"
+import { PartialType } from "@nestjs/swagger"
 
 export class CreateSongDto {
 
@@ -36,3 +37,5 @@ export class CreateSongDto {
   @IsEnum({Enum: Decade})
   decade?: string
 }
+
+export class UpdateSongDto extends PartialType(CreateSongDto) {}
