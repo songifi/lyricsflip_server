@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { validate } from './config/env.validation';
 import { LyricsModule } from './lyrics/lyrics.module';
 import { UserModule } from './user/user.module';
+import { SongModule } from './song/song.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UserModule } from './user/user.module';
     }),
     LyricsModule,
     UserModule,
+    SongModule,
   ],
   controllers: [AppController],
   providers: [AppService],
