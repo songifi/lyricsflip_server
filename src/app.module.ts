@@ -5,14 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
 import { UserModule } from './user/user.module';
-import { lyricModule } from './lyrics/lyric.module';
+import { LyricModule } from './lyrics/lyric.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
-      validate,
+      // validate,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -28,7 +28,7 @@ import { lyricModule } from './lyrics/lyric.module';
         },
       }),
     }),
-    lyricModule,
+    LyricModule,
     UserModule,
   ],
   controllers: [AppController],
