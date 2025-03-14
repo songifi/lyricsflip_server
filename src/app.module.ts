@@ -6,13 +6,14 @@ import { AppService } from './app.service';
 import { validate } from './config/env.validation';
 import { UserModule } from './user/user.module';
 import { LyricModule } from './lyrics/lyric.module';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
-      // validate,
+      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'], // Fallback to `.env`
+      validate,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -30,6 +31,7 @@ import { LyricModule } from './lyrics/lyric.module';
     }),
     LyricModule,
     UserModule,
+    WalletModule
   ],
   controllers: [AppController],
   providers: [AppService],
