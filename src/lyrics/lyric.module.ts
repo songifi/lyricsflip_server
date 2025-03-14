@@ -10,4 +10,4 @@ import { lyric, lyricschema } from 'src/schemas/lyric.schema';
   providers: [lyricService],
   exports: [lyricService]
 })
-export class lyricModule {}
+export class LyricModule {}

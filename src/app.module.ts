@@ -5,15 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
 import { UserModule } from './user/user.module';
-import { lyricModule } from './lyrics/lyric.module';
+import { LyricModule } from './lyrics/lyric.module';
 import { WalletModule } from './wallet/wallet.module';
-import * as dotenv from 'dotenv';
-dotenv.config();
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'], // Fallback to `.env`
       validate,
     }),
     MongooseModule.forRootAsync({
@@ -30,7 +29,7 @@ dotenv.config();
         },
       }),
     }),
-    lyricModule,
+    LyricModule,
     UserModule,
     WalletModule
   ],
