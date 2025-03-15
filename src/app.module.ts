@@ -7,6 +7,9 @@ import { validate } from './config/env.validation';
 import { UserModule } from './user/user.module';
 import { LyricModule } from './lyrics/lyric.module';
 import { WalletModule } from './wallet/wallet.module';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -29,9 +32,14 @@ import { WalletModule } from './wallet/wallet.module';
         },
       }),
     }),
-    LyricModule,
+    PassportModule.register({ defaultStrategy: 'jwt', session: false }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+    }),
+    // LyricModule,
     UserModule,
-    WalletModule
+    WalletModule,
+    AuthenticationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
