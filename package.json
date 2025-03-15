@@ -21,6 +21,7 @@
     "setup": "./scripts/setup-env.sh"
   },
   "dependencies": {
+    "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^11.0.1",
@@ -39,6 +40,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sanitize-html": "^2.14.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
@@ -52,6 +54,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
+    "@types/sanitize-html": "^2.13.0",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.1.1",

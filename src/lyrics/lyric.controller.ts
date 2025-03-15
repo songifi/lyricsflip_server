@@ -21,14 +21,22 @@ import {
 import type { lyricService } from './lyric.service';
 import {
   CreatelyricDto,
+  LyricExtractionOptionsDto,
   QuerylyricDto,
   UpdatelyricDto,
 } from 'src/dto/lyric.dto';
+import { LyricsManagementService } from './lyric-management.service';
+import { lyricDocument } from 'src/schemas/lyric.schema';
+
 
 @ApiTags('lyrics')
 @Controller('lyrics')
 export class lyricController {
-  constructor(private readonly lyricService: lyricService) {}
+  constructor(
+    private readonly lyricService: lyricService,
+
+    private readonly lyricManagementService: LyricsManagementService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -107,4 +115,53 @@ export class lyricController {
   remove(@Param('id') id: string) {
     return this.lyricService.delete(id);
   }
+  
+  //  Partial lyrics extraction for game rounds
+  @Post(':id/extract')
+  @ApiOperation({ summary: 'Extract partial lyrics for game rounds' })
+  @ApiParam({ name: 'id', description: 'Lyric ID' })
+  @ApiBody({
+    type: LyricExtractionOptionsDto,
+    description: 'Options for extracting partial lyrics',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Partial lyrics extracted successfully',
+  })
+  public async extractPartialLyrics(
+    @Param('id') id: string,
+    @Body() options: LyricExtractionOptionsDto,
+  ): Promise<string> {
+    const result = this.lyricManagementService.extractPartialLyrics(
+      id,
+      options,
+    );
+    return result[0];
+  }
+
+  // Batch processing for multiple lyrics
+  @Post('batch')
+  @ApiOperation({ summary: 'Process a batch of lyrics' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Batch processing completed successfully',
+  })
+ public async processBatch(@Body('ids') ids: string[]): Promise<lyricDocument[]> {
+    const lyrics = await this.fetchLyricsByIds(ids);
+    return this.lyricManagementService.processBatchLyrics(lyrics);
+  }
+
+  // Extracted method for fetching IDs (for better readability)
+  private async fetchLyricsByIds(ids: string[]): Promise<lyricDocument[]> {
+    return (await this.lyricService.findByIds(ids)) as lyricDocument[];
+  }
+
 }

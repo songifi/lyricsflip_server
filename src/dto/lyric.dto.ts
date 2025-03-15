@@ -71,3 +71,23 @@ export class QuerylyricDto extends PartialType(CreatelyricDto) {
 }
 
 export class UpdatelyricDto extends PartialType(CreatelyricDto) {}
+
+//dto for partial lyric extraction
+export class LyricExtractionOptionsDto {
+  @IsInt()
+  @IsOptional()
+  @Min(1)
+  @Max(20)
+  minLines?: number;
+
+  @IsInt()
+  @IsOptional()
+  @Min(1)
+  @Max(50)
+  maxLines?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  includeChorus?: boolean;
+}
+ 

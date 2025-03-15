@@ -11,7 +11,9 @@ import { lyric, type lyricDocument } from 'src/schemas/lyric.schema';
 @Injectable()
 export class lyricService {
   constructor(
-    @InjectModel(lyric.name) private lyricModel: Model<lyricDocument>,
+    @InjectModel(lyric.name) 
+    private lyricModel: Model<lyricDocument>, 
+
   ) {}
 
   async create(createlyricDto: CreatelyricDto): Promise<lyric> {
