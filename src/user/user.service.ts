@@ -3,12 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IUser, User, AccountStatus } from '../schemas/user.schema';
 import { CreateUserDto, UpdateUserDto } from '../dto/users.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  private readonly MAX_FAILED_ATTEMPTS = 5;
-  private readonly LOCK_TIME = 30 * 60 * 1000; // 30 minutes
-
   constructor(@InjectModel(User.name) private userModel: Model<IUser>) {}
 
   async create(createUserDto: CreateUserDto): Promise<any> {
@@ -77,6 +75,19 @@ export class UserService {
     return updatedUser;
   }
 
+  async findByEmail(email: string): Promise<IUser> {
+    const user = await this.userModel
+      .findOne({ email })
+      .select('+password')
+      .exec();
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user as IUser;
+  }
+
   async findById(id: string): Promise<IUser> {
     const user = await this.userModel.findById(id).exec();
 
@@ -111,5 +122,54 @@ export class UserService {
     // Update password
     user.password = newPassword;
     await user.save();
+  }
+
+  async updateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
+    const user = await this.userModel
+      .findById(userId)
+      .select('refreshTokens')
+      .exec();
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+
+    user.refreshTokens = [...user.refreshTokens.slice(-4), hashedRefreshToken];
+
+    await user.save();
+  }
+
+  async verifyRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<boolean> {
+    const user = await this.userModel
+      .findById(userId)
+      .select('refreshTokens')
+      .exec();
+
+    if (!user) return false;
+
+    return (
+      await Promise.all(
+        user.refreshTokens.map((token) => bcrypt.compare(refreshToken, token)),
+      )
+    ).includes(true);
+  }
+
+  async clearRefreshToken(userId: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(userId, { refreshToken: [] }).exec();
+  }
+
+  async resetFailedAttempts(userId: string) {
+    return this.userModel
+      .findByIdAndUpdate(userId, { failedLoginAttempts: 0, lockUntil: null })
+      .exec();
   }
 }

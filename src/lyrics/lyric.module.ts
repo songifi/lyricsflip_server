@@ -5,9 +5,11 @@ import { lyricController } from './lyric.controller';
 import { lyric, lyricschema } from 'src/schemas/lyric.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: lyric.name, schema: lyricschema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: lyric.name, schema: lyricschema }]),
+  ],
   controllers: [lyricController],
   providers: [lyricService],
-  exports: [lyricService]
+  exports: [lyricService],
 })
 export class LyricModule {}
