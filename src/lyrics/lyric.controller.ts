@@ -28,6 +28,7 @@ import {
 import { LyricsManagementService } from './lyric-management.service';
 import { lyricDocument } from 'src/schemas/lyric.schema';
 
+
 @ApiTags('lyrics')
 @Controller('lyrics')
 export class lyricController {
@@ -114,7 +115,7 @@ export class lyricController {
   remove(@Param('id') id: string) {
     return this.lyricService.delete(id);
   }
-
+  
   //  Partial lyrics extraction for game rounds
   @Post(':id/extract')
   @ApiOperation({ summary: 'Extract partial lyrics for game rounds' })
@@ -162,4 +163,5 @@ export class lyricController {
   private async fetchLyricsByIds(ids: string[]): Promise<lyricDocument[]> {
     return (await this.lyricService.findByIds(ids)) as lyricDocument[];
   }
+
 }

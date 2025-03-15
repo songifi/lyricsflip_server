@@ -8,6 +8,7 @@ import {
   Delete,
   Version,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { CreateWalletDto, UpdateWalletDto } from '../dto/wallet.dto';

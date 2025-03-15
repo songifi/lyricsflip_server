@@ -76,6 +76,16 @@ export class User {
 
   @Prop()
   updatedAt!: Date;
+
+  @Prop({
+    type: [String],
+    default: [],
+    select: false,
+  })
+  refreshTokens!: string[];
+
+  @Prop()
+  lockUntil?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

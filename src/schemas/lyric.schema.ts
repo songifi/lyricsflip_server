@@ -3,7 +3,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { Document } from 'mongoose';
 import { Decade, Genre } from 'src/enum/lyric.enum';
 
-
 export type lyricDocument = lyric & Document;
 
 @Schema({
