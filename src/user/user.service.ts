@@ -1,175 +1,289 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IUser, User, AccountStatus } from '../schemas/user.schema';
-import { CreateUserDto, UpdateUserDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
+import { UserResponseDto } from './dto/user-response.dto';
+import { UserProfileDto } from './dto/user-profile.dto';
+import { UserStatus } from './enums/user-status.enum';
+import { CreateUserDto } from 'src/dto/users.dto';
+import { UpdateUserDto } from 'src/dto/users.dto';
+import { UserDocument } from 'src/schemas/user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<IUser>) {}
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
+  ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<any> {
-    // Check if username or email already exists
-    const existingUser = await this.userModel.findOne({
-      $or: [
-        { username: createUserDto.username },
-        { email: createUserDto.email },
-      ],
-    });
-
-    if (existingUser) {
-      throw new HttpException(
-        'Username or email already exists',
-        HttpStatus.CONFLICT,
-      );
+  /**
+   * Create a new user
+   */
+  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    // Check if username is already taken
+    const existingUsername = await this.userModel.findOne({ 
+      username: createUserDto.username 
+    }).exec();
+    
+    if (existingUsername) {
+      throw new ConflictException('Username is already taken');
     }
 
-    // Create new user
+    // Check if email is already registered
+    const existingEmail = await this.userModel.findOne({ 
+      email: createUserDto.email 
+    }).exec();
+    
+    if (existingEmail) {
+      throw new ConflictException('Email is already registered');
+    }
+
+    // Hash the password
+    const passwordHash = await bcrypt.hash(createUserDto.password, 10);
+
+    // Create new user with displayName defaulting to username if not provided
     const newUser = new this.userModel({
-      ...createUserDto,
-      accountStatus: AccountStatus.PENDING,
+      username: createUserDto.username,
+      email: createUserDto.email,
+      passwordHash,
+      displayName: createUserDto.displayName || createUserDto.username,
+      walletAddresses: createUserDto.walletAddress ? [createUserDto.walletAddress] : [],
+      primaryWalletAddress: createUserDto.walletAddress || null,
+      status: UserStatus.ACTIVE,
     });
 
     const savedUser = await newUser.save();
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, failedLoginAttempts, lastFailedLogin, ...result } =
-      savedUser.toObject(); // Remove password from the result object
-
-    // Return user
-    return result;
+    return new UserResponseDto(savedUser.toObject());
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<IUser> {
-    // Check if username or email already exists
-    if (updateUserDto.username || updateUserDto.email) {
-      const existingUser = await this.userModel.findOne({
-        _id: { $ne: id },
-        $or: [
-          ...(updateUserDto.username
-            ? [{ username: updateUserDto.username }]
-            : []),
-          ...(updateUserDto.email ? [{ email: updateUserDto.email }] : []),
-        ],
-      });
+  /**
+   * Find all users with pagination
+   */
+  async findAll(page = 1, limit = 10): Promise<{ users: UserResponseDto[], total: number, page: number, pages: number }> {
+    const skip = (page - 1) * limit;
+    
+    const [users, total] = await Promise.all([
+      this.userModel.find()
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec(),
+      this.userModel.countDocuments().exec(),
+    ]);
 
-      if (existingUser) {
-        throw new HttpException(
-          'Username or email already exists',
-          HttpStatus.CONFLICT,
-        );
+    const pages = Math.ceil(total / limit);
+
+    return {
+      users: users.map(user => new UserResponseDto(user.toObject())),
+      total,
+      page,
+      pages,
+    };
+  }
+
+  /**
+   * Find one user by ID
+   */
+  async findOne(id: string): Promise<UserResponseDto> {
+    const user = await this.userModel.findById(id).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    
+    return new UserResponseDto(user.toObject());
+  }
+
+  /**
+   * Get user profile by username
+   */
+  async getProfile(username: string, currentUserId?: string): Promise<UserProfileDto> {
+    const user = await this.userModel.findOne({ username }).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`User with username ${username} not found`);
+    }
+
+    // Check if the current user has this user in their contacts
+    let isContact = false;
+    if (currentUserId) {
+      const currentUser = await this.userModel.findById(currentUserId).exec();
+      if (currentUser) {
+        isContact = currentUser.contacts.includes(user._id.toString());
       }
     }
 
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      id,
-      { $set: updateUserDto },
-      { new: true },
-    );
-
-    if (!updatedUser) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
-
-    return updatedUser;
+    // Convert to object and add the isContact flag
+    const userObj = user.toObject();
+    userObj.isContact = isContact;
+    
+    return new UserProfileDto(userObj);
   }
 
-  async findByEmail(email: string): Promise<IUser> {
-    const user = await this.userModel
-      .findOne({ email })
-      .select('+password')
-      .exec();
-
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
-
-    return user as IUser;
-  }
-
-  async findById(id: string): Promise<IUser> {
+  /**
+   * Update a user
+   */
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const user = await this.userModel.findById(id).exec();
-
+    
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return user;
+    // If updating wallet address, add it to the array if not already present
+    if (updateUserDto.walletAddress) {
+      if (!user.walletAddresses.includes(updateUserDto.walletAddress)) {
+        user.walletAddresses.push(updateUserDto.walletAddress);
+      }
+      user.primaryWalletAddress = updateUserDto.walletAddress;
+    }
+
+    // Update other fields
+    if (updateUserDto.displayName) user.displayName = updateUserDto.displayName;
+    if (updateUserDto.bio !== undefined) user.bio = updateUserDto.bio;
+    if (updateUserDto.avatarUrl !== undefined) user.avatarUrl = updateUserDto.avatarUrl;
+    if (updateUserDto.status) user.status = updateUserDto.status;
+
+    // Update settings if provided
+    if (updateUserDto.settings) {
+      // Update notifications settings
+      if (updateUserDto.settings.notifications) {
+        Object.assign(user.settings.notifications, updateUserDto.settings.notifications);
+      }
+
+      // Update privacy settings
+      if (updateUserDto.settings.privacy) {
+        Object.assign(user.settings.privacy, updateUserDto.settings.privacy);
+      }
+
+      // Update other settings
+      if (updateUserDto.settings.theme) user.settings.theme = updateUserDto.settings.theme;
+      if (updateUserDto.settings.language) user.settings.language = updateUserDto.settings.language;
+    }
+
+    const updatedUser = await user.save();
+    return new UserResponseDto(updatedUser.toObject());
   }
 
-  async changePassword(
-    userId: string,
-    currentPassword: string,
-    newPassword: string,
-  ): Promise<void> {
-    const user = await this.userModel.findById(userId).select('+password');
-
+  /**
+   * Delete a user
+   */
+  async remove(id: string): Promise<void> {
+    const user = await this.userModel.findById(id).exec();
+    
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
-
-    // Verify current password
-    const isPasswordValid = await user.comparePassword(currentPassword);
-
-    if (!isPasswordValid) {
-      throw new HttpException(
-        'Current password is incorrect',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    // Update password
-    user.password = newPassword;
+    
+    // Soft delete by setting status to DELETED
+    user.status = UserStatus.DELETED;
     await user.save();
   }
 
-  async updateRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ): Promise<void> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('refreshTokens')
-      .exec();
+  /**
+   * Check if username is available
+   */
+  async isUsernameAvailable(username: string): Promise<{ available: boolean }> {
+    const user = await this.userModel.findOne({ username }).exec();
+    return { available: !user };
+  }
 
+  /**
+   * Find user by wallet address
+   */
+  async findByWalletAddress(walletAddress: string): Promise<UserResponseDto> {
+    const user = await this.userModel.findOne({ 
+      walletAddresses: walletAddress 
+    }).exec();
+    
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException(`User with wallet address ${walletAddress} not found`);
+    }
+    
+    return new UserResponseDto(user.toObject());
+  }
+
+  /**
+   * Associate wallet address with user
+   */
+  async associateWalletAddress(userId: string, walletAddress: string): Promise<UserResponseDto> {
+    // Check if wallet is already associated with another user
+    const existingUser = await this.userModel.findOne({ 
+      walletAddresses: walletAddress 
+    }).exec();
+    
+    if (existingUser && existingUser._id.toString() !== userId) {
+      throw new ConflictException('Wallet address is already associated with another user');
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+    const user = await this.userModel.findById(userId).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
 
-    user.refreshTokens = [...user.refreshTokens.slice(-4), hashedRefreshToken];
+    // Add wallet address if not already present
+    if (!user.walletAddresses.includes(walletAddress)) {
+      user.walletAddresses.push(walletAddress);
+    }
+    
+    // Set as primary if no primary is set
+    if (!user.primaryWalletAddress) {
+      user.primaryWalletAddress = walletAddress;
+    }
 
-    await user.save();
+    const updatedUser = await user.save();
+    return new UserResponseDto(updatedUser.toObject());
   }
 
-  async verifyRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ): Promise<boolean> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('refreshTokens')
-      .exec();
-
-    if (!user) return false;
-
-    return (
-      await Promise.all(
-        user.refreshTokens.map((token) => bcrypt.compare(refreshToken, token)),
-      )
-    ).includes(true);
+  /**
+   * Update last seen timestamp
+   */
+  async updateLastSeen(userId: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(
+      userId,
+      { lastSeen: new Date() }
+    ).exec();
   }
 
-  async clearRefreshToken(userId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(userId, { refreshToken: [] }).exec();
-  }
+  /**
+   * Search users by username, display name, or wallet address
+   */
+  async searchUsers(query: string, page = 1, limit = 10): Promise<{ users: UserResponseDto[], total: number, page: number, pages: number }> {
+    const skip = (page - 1) * limit;
+    
+    // Create search regex (case insensitive)
+    const searchRegex = new RegExp(query, 'i');
+    
+    const [users, total] = await Promise.all([
+      this.userModel.find({
+        $or: [
+          { username: searchRegex },
+          { displayName: searchRegex },
+          { walletAddresses: query } // Exact match for wallet address
+        ],
+        status: { $ne: UserStatus.DELETED } // Exclude deleted users
+      })
+        .skip(skip)
+        .limit(limit)
+        .sort({ username: 1 })
+        .exec(),
+      this.userModel.countDocuments({
+        $or: [
+          { username: searchRegex },
+          { displayName: searchRegex },
+          { walletAddresses: query }
+        ],
+        status: { $ne: UserStatus.DELETED }
+      }).exec(),
+    ]);
 
-  async resetFailedAttempts(userId: string) {
-    return this.userModel
-      .findByIdAndUpdate(userId, { failedLoginAttempts: 0, lockUntil: null })
-      .exec();
+    const pages = Math.ceil(total / limit);
+
+    return {
+      users: users.map(user => new UserResponseDto(user.toObject())),
+      total,
+      page,
+      pages,
+    };
   }
 }
