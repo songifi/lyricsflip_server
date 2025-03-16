@@ -11,6 +11,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GameSessionModule } from './game-session/game-session.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { GameSessionModule } from './game-session/game-session.module';
     WalletModule,
     AuthenticationModule,
     GameSessionModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
