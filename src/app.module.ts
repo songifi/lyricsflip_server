@@ -10,6 +10,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { GameSessionModule } from './game-session/game-session.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     WalletModule,
     AuthenticationModule,
+    GameSessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
