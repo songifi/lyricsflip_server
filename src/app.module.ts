@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { validate } from './config/env.validation';
         },
       }),
     }),
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
