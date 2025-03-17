@@ -4,10 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './config/env.validation';
-import { UserModule } from './user/user.module';
-import { LyricModule } from './lyrics/lyric.module';
 import { WalletModule } from './wallet/wallet.module';
-import { AuthenticationModule } from './authentication/authentication.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GameSessionModule } from './game-session/game-session.module';
@@ -40,9 +37,7 @@ import { CategoryModule } from './category/category.module';
       secret: process.env.JWT_SECRET,
     }),
     // LyricModule,
-    UserModule,
     WalletModule,
-    AuthenticationModule,
     GameSessionModule,
     CommentsModule,
     CategoryModule,

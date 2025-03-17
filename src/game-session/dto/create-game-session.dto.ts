@@ -1,31 +1,19 @@
-import {
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
-import { SessionStatus } from 'src/enum/game-session.enum';
-import { User } from 'src/schemas/user.schema';
+import { IsNotEmpty, IsString, IsOptional, IsObject, IsArray } from 'class-validator';
 
 export class CreateGameSessionDto {
-  @IsInt()
-  sessionId: number;
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
   @IsNotEmpty()
-  createdBy: User;
-
-  @IsEnum(SessionStatus)
-  status: SessionStatus;
-
-  @IsArray()
-  @IsString({ each: true })
-  players: string[];
-
   @IsString()
-  config: string;
+  host: string;
 
-  @IsDate()
-  createdAt: Date;
+  @IsOptional()
+  @IsArray()
+  players?: string[];
+
+  @IsOptional()
+  @IsObject()
+  settings?: Record<string, any>;
 }
