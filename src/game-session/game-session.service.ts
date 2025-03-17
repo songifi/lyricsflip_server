@@ -5,7 +5,6 @@ import { GameSession, GameSessionDocument } from '../schemas/game-session.schema
 import { CreateGameSessionDto } from '../game-session/dto/create-game-session.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuthenticationService } from '../authentication/authentication.service';
 import rateLimit from 'express-rate-limit';
 import { UpdateGameSessionDto } from './dto/update-game-session.dto';
 
@@ -23,7 +22,6 @@ export class GameSessionService {
   constructor(
     @InjectModel(GameSession.name) private readonly gameSessionModel: Model<GameSessionDocument>,
     private readonly eventEmitter: EventEmitter2,
-    private readonly authService: AuthenticationService,
   ) {}
 
   private checkRateLimit(userId: string): void {

@@ -19,7 +19,7 @@ import {
   ApiQuery,
   ApiBody,
 } from '@nestjs/swagger';
-import type { lyricService } from './lyric.service';
+// import type { lyricService } from './lyric.service';
 import {
   CreatelyricDto,
   LyricExtractionOptionsDto,
@@ -28,14 +28,14 @@ import {
 } from 'src/dto/lyric.dto';
 import { LyricsManagementService } from './lyric-management.service';
 import { lyricDocument } from 'src/schemas/lyric.schema';
-import { JwtAuthGuard } from 'src/authentication/guards/jwt.guard';
+// import { JwtAuthGuard } from 'src/authentication/guards/jwt.guard';
 
 
 @ApiTags('lyrics')
 @Controller('lyrics')
 export class lyricController {
   constructor(
-    private readonly lyricService: lyricService,
+    // private readonly lyricService: lyricService,
 
     private readonly lyricManagementService: LyricsManagementService,
   ) {}
@@ -169,7 +169,7 @@ export class lyricController {
 
   
   @Post(':id/categories/:categoryId')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   addCategory(
     @Param('id') id: string,
     @Param('categoryId') categoryId: string,
@@ -180,7 +180,7 @@ export class lyricController {
 
   
   @Delete(':id/categories/:categoryId')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   removeCategory(
     @Param('id') id: string,
     @Param('categoryId') categoryId: string,

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { lyricService } from './lyric.service';
+// import { lyricService } from './lyric.service';
 import { lyricController } from './lyric.controller';
 import { lyric, lyricschema } from 'src/schemas/lyric.schema';
 import { LyricsManagementService } from './lyric-management.service';
@@ -12,8 +12,8 @@ import { CategoryModule } from 'src/category/category.module';
     CategoryModule
   ],
   controllers: [lyricController],
-  providers: [lyricService, LyricsManagementService],
-  exports: [lyricService, LyricsManagementService]
+  providers: [LyricsManagementService],
+  exports: [LyricsManagementService]
 
 })
 export class LyricModule {}
