@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateGameSessionDto } from './create-game-session.dto';
+import { IsArray, IsObject, IsOptional, IsString } from "class-validator";
 
-export class UpdateGameSessionDto extends PartialType(CreateGameSessionDto) {}
+export class UpdateGameSessionDto {
+    @IsOptional()
+    @IsString()
+    name?: string;
+  
+    @IsOptional()
+    @IsArray()
+    players?: string[];
+  
+    @IsOptional()
+    @IsObject()
+    settings?: Record<string, any>;
+  }
