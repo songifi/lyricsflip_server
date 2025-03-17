@@ -8,6 +8,8 @@ import {
   IsEnum,
   ValidateNested,
   IsBoolean,
+  IsArray,
+  IsMongoId,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
@@ -33,18 +35,27 @@ export class CreatelyricDto {
   @IsOptional()
   releaseYear?: number;
 
+  @IsArray()
   @IsEnum({ Enum: Genre })
   @IsOptional()
-  genre?: string;
+  @IsMongoId({ each: true })
+  genres?: string[];
 
   @ValidateNested()
   @Type(() => CreatelyricDto)
   @IsOptional()
   lyrics?: CreatelyricDto;
 
+  @IsArray()
   @IsOptional()
   @IsEnum({ Enum: Decade })
-  decade?: string;
+  @IsMongoId({ each: true })
+  decades?: string[];
+
+  @IsArray()
+  @IsOptional()
+  @IsMongoId({ each: true })
+  tags?: string[];
 }
 
 export class QuerylyricDto extends PartialType(CreatelyricDto) {
