@@ -8,8 +8,8 @@ export class GameSessionController {
   constructor(private readonly gameSessionService: GameSessionService) {}
 
   @Post()
-  create(@Body() createGameSessionDto: CreateGameSessionDto) {
-    return this.gameSessionService.create(createGameSessionDto);
+  create(@Body() createGameSessionDto: CreateGameSessionDto, @Param('userId') userId: string) {
+    return this.gameSessionService.create(userId, createGameSessionDto);
   }
 
   @Get()
@@ -19,16 +19,16 @@ export class GameSessionController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.gameSessionService.findOne(+id);
+    return this.gameSessionService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGameSessionDto: UpdateGameSessionDto) {
-    return this.gameSessionService.update(+id, updateGameSessionDto);
+  update(@Param('userId') userId: string, @Param('id') id: string, @Body() updateGameSessionDto: UpdateGameSessionDto) {
+    return this.gameSessionService.update(userId, id, updateGameSessionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gameSessionService.remove(+id);
+  remove(@Param('userId') userId: string, @Param('id') id: string) {
+    return this.gameSessionService.remove(userId, id);
   }
 }
