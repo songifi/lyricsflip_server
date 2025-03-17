@@ -9,6 +9,7 @@ import {
   Query,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,6 +28,7 @@ import {
 } from 'src/dto/lyric.dto';
 import { LyricsManagementService } from './lyric-management.service';
 import { lyricDocument } from 'src/schemas/lyric.schema';
+import { JwtAuthGuard } from 'src/authentication/guards/jwt.guard';
 
 
 @ApiTags('lyrics')
@@ -163,5 +165,62 @@ export class lyricController {
   private async fetchLyricsByIds(ids: string[]): Promise<lyricDocument[]> {
     return (await this.lyricService.findByIds(ids)) as lyricDocument[];
   }
+
+
+  
+  @Post(':id/categories/:categoryId')
+  @UseGuards(JwtAuthGuard)
+  addCategory(
+    @Param('id') id: string,
+    @Param('categoryId') categoryId: string,
+    @Query('type') type: 'genres' | 'decades' | 'tags',
+  ) {
+    return this.lyricService.addCategory(id, categoryId, type);
+  }
+
+  
+  @Delete(':id/categories/:categoryId')
+  @UseGuards(JwtAuthGuard)
+  removeCategory(
+    @Param('id') id: string,
+    @Param('categoryId') categoryId: string,
+    @Query('type') type: 'genres' | 'decades' | 'tags',
+  ) {
+    return this.lyricService.removeCategory(id, categoryId, type);
+  }
+
+  
+  @Get('by-category/:categoryId')
+  findByCategory(
+    @Param('categoryId') categoryId: string,
+    @Query('type') type?: 'genres' | 'decades' | 'tags',
+  ) {
+    return this.lyricService.findByCategory(categoryId, type);
+  }
+
+
+  
+@Get('search')
+async searchLyrics(
+  @Query('genres') genres?: string,
+  @Query('decades') decades?: string,
+  @Query('tags') tags?: string,
+  @Query('q') searchTerm?: string,
+  @Query('page') page?: number,
+  @Query('limit') limit?: number,
+) {
+  const genreIds = genres ? genres.split(',') : [];
+  const decadeIds = decades ? decades.split(',') : [];
+  const tagIds = tags ? tags.split(',') : [];
+  
+  return this.lyricService.searchByCategories(
+    genreIds,
+    decadeIds,
+    tagIds,
+    searchTerm,
+    page || 1,
+    limit || 10
+  );
+}
 
 }

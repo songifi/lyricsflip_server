@@ -12,6 +12,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GameSessionModule } from './game-session/game-session.module';
 import { CommentsModule } from './comments/comments.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { CommentsModule } from './comments/comments.module';
     AuthenticationModule,
     GameSessionModule,
     CommentsModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

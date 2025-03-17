@@ -1,7 +1,35 @@
 // import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { Decade, Genre } from 'src/enum/lyric.enum';
+
+import mongoose from 'mongoose';
+import { Category } from './category.schema';
+
+
+@Schema({ timestamps: true })
+export class Lyric extends Document {
+
+  
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
+  categories: Category[];
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
+  genres: Category[];
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
+  decades: Category[];
+  
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
+  tags: Category[];
+}
+
+
+export const LyricSchema = SchemaFactory.createForClass(Lyric);
+
+// Create indexes for efficient querying
+LyricSchema.index({ categories: 1 });
+
 
 export type lyricDocument = lyric & Document;
 
