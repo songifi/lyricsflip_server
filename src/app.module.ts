@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { GameSessionModule } from './game-session/game-session.module';
 import { CommentsModule } from './comments/comments.module';
 import { CategoryModule } from './category/category.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CategoryModule } from './category/category.module';
     GameSessionModule,
     CommentsModule,
     CategoryModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
