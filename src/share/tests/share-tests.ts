@@ -2,10 +2,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ShareService } from '../share.service';
+// import { ShareService } from '../share.service';
 import { Share, ContentType, TargetType } from '../schemas/share.schema';
-import { User } from '../../user/schemas/user.schema';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { User } from 'src/schemas/user.schema';
 
 // Mock data
 const mockUserId = new Types.ObjectId().toString();
