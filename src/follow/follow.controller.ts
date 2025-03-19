@@ -21,12 +21,12 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { FollowService } from './follow.service';
-import { JwtAuthGuard } from '../authentication/guards/jwt.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CreateFollowDto } from '../dto/create-follow.dto';
 import { UpdateFollowStatusDto } from '../dto/update-follow-status.dto';
 import { FollowQueryDto } from '../dto/follow-query.dto';
 import { Follow, FollowStatus } from '../schemas/follow.schema';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @ApiTags('follows')
 @Controller('follows')
