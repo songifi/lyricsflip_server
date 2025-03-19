@@ -18,7 +18,7 @@ export class CategoryService {
       const createdCategory = new this.categoryModel(createCategoryDto);
       return await createdCategory.save();
     } catch (error) {
-      if (error.code === 11000) {
+      if ((error as any).code === 11000) {
         throw new ConflictException(`Category with name "${createCategoryDto.name}" already exists for type "${createCategoryDto.type}"`);
       }
       throw error;

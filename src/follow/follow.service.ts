@@ -114,8 +114,8 @@ export class FollowService {
     const followers = await this.followModel
       .find(filter)
       .populate('followerId', 'username profile.avatar')
-      .skip((query.page - 1) * query.limit)
-      .limit(query.limit)
+      .skip(((query.page ?? 1) - 1) * (query.limit ?? 10))
+      .limit(query.limit ?? 10)
       .sort({ createdAt: -1 })
       .exec();
 
@@ -142,8 +142,8 @@ export class FollowService {
     const following = await this.followModel
       .find(filter)
       .populate('followeeId', 'username profile.avatar')
-      .skip((query.page - 1) * query.limit)
-      .limit(query.limit)
+      .skip(((query.page ?? 1) - 1) * (query.limit ?? 10))
+      .limit(query.limit ?? 10)
       .sort({ createdAt: -1 })
       .exec();
 
@@ -177,8 +177,8 @@ export class FollowService {
     const requests = await this.followModel
       .find(filter)
       .populate('followerId', 'username profile.avatar')
-      .skip((query.page - 1) * query.limit)
-      .limit(query.limit)
+      .skip(((query.page ?? 1) - 1) * (query.limit ?? 10))
+      .limit(query.limit ?? 10)
       .sort({ createdAt: -1 })
       .exec();
 
