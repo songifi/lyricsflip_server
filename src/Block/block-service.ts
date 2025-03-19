@@ -3,9 +3,9 @@ import { Injectable, ConflictException, NotFoundException, BadRequestException }
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Block } from './schemas/block.schema';
-import { User } from '../user/schemas/user.schema';
-import { CreateBlockDto } from './dto/create-block.dto';
-import { BlockQueryDto } from './dto/block-query.dto';
+import { User } from '../schemas/user.schema';
+import { CreateBlockDto } from '../Block/block-dto';
+import { BlockQueryDto } from '../Block/block-dto';
 
 @Injectable()
 export class BlockService {
